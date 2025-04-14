@@ -2,23 +2,24 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8"/>
-        <title>observer CRUD</title>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <title>CRUD</title>
+        
+        <!-- styles -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css">
     </head>
     <body>
+        <!-- content -->
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12 col-md-8">
 
-        <div class="container">
-            <div class="row mt-4 g-4">
-
-                <div class="col-12 col-md-8 order-1 order-md-0">
                     <!-- card -->
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between card-round">
-                            <h4 class="fw-bold">CRUD</h4>
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h4>Registros</h4>
                         </div>
                         <div class="card-body p-0">
-                            <table class="table table-striped">
+                            <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -27,197 +28,49 @@
                                         <th>Controles</th>
                                     </tr>
                                 </thead>
-                                
-                                <tbody></tbody>
+                                <tbody>
+                                    <!-- jQuery -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- end card -->
-                </div>
+                    <!-- card end -->
 
-                <div class="col-12 col-md-4 order-0 order-md-1">
-                    <div class="card">
+                </div>
+                <div class="col-12 col-md-4">
+                    <!-- card -->
+                    <div class="card shadow">
                         <div class="card-header">
-                            <h4 class="fw-bold">Registro</h4>
+                            <h4>Información</h4>
                         </div>
                         <div class="card-body">
                             <div class="form-group">
+                                <label class="form-label" for="">ID</label>
+                                <input class="form-control" name="id" type="text" value="" readonly/>
+                            </div>
+                            <div class="form-group mt-2">
                                 <label class="form-label" for="">Valor 1</label>
-                                <input class="visually-hidden" name="id" type="text" value=""/>
                                 <input class="form-control" name="value1" type="text" value=""/>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                                 <label class="form-label" for="">Valor 2</label>
                                 <input class="form-control" name="value2" type="text" value=""/>
-                            </div>                            
-                        </div>
-                        <div class="card-footer">
-                            <div class="form-group d-flex justify-content-end gap-2">
-                                <button class="btn btn-primary" onclick="storeRecord()">Guardar</button>
                             </div>
                         </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <button class="btn btn-primary">Guardar</button>
+                        </div>
                     </div>
+                    <!-- card end -->
                 </div>
             </div>
         </div>
+        <!-- content end -->
 
-        <!-- jquery -->
-        <script>
-            class ISubject {
-                registerObserver() {} // this recibes an observer to suscribe
-                removeObserver(observer) {} // this recibes an observer to unsubscribe
-                notifyObservers() {} // called everytime that the subject state changes and notifies the observers
-                changeState(state) {} // updates the state
-            }
-
-            class IObserver {
-                update(state) {} // this updates the state of the observer
-            }
-
-            // concrete Subject
-            class Subject extends ISubject {
-                constructor() {
-                    super()
-
-                    this.observers = []
-                    this.state = null
-                }
-
-                registerObserver(observer) {
-                    this.observers.push(observer)
-                }
-
-                removeObserver(observer) {
-                    this.observers = this.observers.filter(i => i != observer)
-                }
-
-                notifyObservers() {
-                    this.observers.forEach(i => i.update(this.state))
-                }
-
-                changeState(state) {
-                    this.state = state
-                    this.notifyObservers()
-                }
-            }
-
-            // concrete observer
-            class Observer extends IObserver {
-                constructor(subject) {
-                    super()
-                    subject.registerObserver(this)
-                    this.state = null
-                }
-
-                update(state) {
-                    this.state = state
-                }
-            }
-
-            let subject = new Subject()
-            
-            let observer = new Observer(subject) // suscribe observer
-
-            
-            /* OBSERVER UI */
-            let records = [
-                {
-                    id: 1,
-                    value1: "value 1",
-                    value2: "value 2"
-                },{
-                    id: 2,
-                    value1: "value 1",
-                    value2: "value 2"
-                }
-            ]
-
-            let recordsCount = records.length
-            
-            class Component extends Observer {
-                constructor(manager) {
-                    super(manager)
-                    
-                    this.element = $(".table")
-                }
-
-                update(state) {
-                    super.update(state)
-
-                    this.render()
-                }
-
-                render() {
-                    this.element.find("tbody").html("")
-                    
-                    this.state.forEach(record => {
-                        let row = ""
-                        row += `<tr>`
-                        row += `<td>${record.id}</td>`
-                        row += `<td>${record.value1}</td>`
-                        row += `<td>${record.value2}</td>`
-                        row += `<td class="d-flex justify-content-end gap-2">`
-                        row += `<button class="btn btn-warning" onclick='modifyRecord(${record.id})'>Modificar</button>`
-                        row += `<button class="btn btn-danger" onclick='deleteRecord(${record.id})'>Borrar</button>`
-                        row += `</td>`
-                        row += `</tr>`
-
-                        this.element.find("tbody").append(row)
-                    })
-                }
-            }
-
-            const manager = new Subject() // component manager
-            const component = new Component(manager) // component
-
-            // altering the state
-            function deleteRecord(id) {
-                // api, success update state
-                manager.changeState(manager.state.filter(i => i.id != id))
-            }
-
-            function storeRecord() {
-                if($("input[name='id']").val() == "") {
-                    recordsCount += 1
-
-                    const record = {
-                        id: recordsCount,
-                        value1: $("input[name='value1']").val(),
-                        value2: $("input[name='value2']").val()
-                    }
-
-                    manager.changeState([...manager.state, record])
-                }else {
-                    manager.changeState(manager.state.map(i => {
-                        if(i.id == $("input[name='id']").val()) {
-                            return {
-                                id: i.id,
-                                value1: $("input[name='value1']").val(),
-                                value2: $("input[name='value2']").val()
-                            }
-                        }else {
-                            return i
-                        }
-                    }))
-                }
-
-                $(".card").find("input").val("")
-            }
-
-            function modifyRecord(id) {
-                const record = manager.state.filter(i => i.id == id)[0]
-
-                $("input[name='id']").val(record.id)
-                $("input[name='value1']").val(record.value1)
-                $("input[name='value2']").val(record.value2)
-            }
-            
-            $(() => {
-                manager.changeState(records)
-            })
-        </script>
-        <!-- end jquery -->
-        
+        <!-- scripts -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="./src/utility/observer.js"></script>
+        <script src="./src/app.js"></script>
     </body>
 </html>

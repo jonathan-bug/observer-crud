@@ -1,0 +1,68 @@
+* Observer CRUD
+This is a project  to learn and show how to use  an observer to handle
+*CRUD* operations like a single page using *jQuery*.
+
+** How it Works
+The clases  *Observer* and *Behavior* have  some methods to work  with the
+*observer*. The *Behavior*  class has methods to add  observers and remove
+them, also it  has methods to notify all the  observers when the state
+changes.
+
+The *Observer* class  has methods to update his state  when the behavior
+is triggered and  has changed his state, then the  state is updated in
+each observer.
+
+** Class Structure
+*** Behavior
+| method                   | -                                                    |
+|--------------------------+------------------------------------------------------|
+| registerObserver()       | Registers an observer to watch the behavior.         |
+| removeObserver(observer) | Removes an observer to stop watching the behavior    |
+| notifyObservers()        | Notifies all the observers when the state changes.   |
+| changeState(state)       | Changes the state and triggers the *notifyObservers()* |
+
+*** Observer
+| method             | -                                                                        |
+|--------------------+--------------------------------------------------------------------------|
+| updateState(state) | Updates the state in the observer and is called by the *notifyObservers()* |
+
+** Code
+The *Behavior* class.
+#+begin_src js
+class Behavior {
+    constructor() {
+        this.observers = []
+        this.state = null
+    }
+
+    registerObserver(observer) {
+        this.observers.push(observer)
+    }
+
+    removeObserver(observer) {
+        this.observers = this.observers.filter((item) => item != observer)
+    }
+
+    notifyObservers() {
+        this.observers.forEach((item) => item.updateState(this.state))
+    }
+
+    changeState(state) {
+        this.state = state
+        this.notifyObservers()
+    }
+}
+#+end_src
+The *Observer* class.
+#+begin_src js
+class Observer {
+    constructor(behavior) {
+        behavior.registerObserver(this)
+        this.state = null
+    }
+
+    updateState(state) {
+        this.state = state
+    }
+}
+#+end_src

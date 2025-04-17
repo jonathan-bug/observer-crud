@@ -66,18 +66,27 @@ component.render((state) => {
     $("table").find("tbody").children().remove()
     
     state.forEach((item) => {
-        let row = ""
-        row += `<tr>`
-        row += `<td>${item.id}</td>`
-        row += `<td>${item.value1}</td>`
-        row += `<td>${item.value2}</td>`
-        row += `<td class="d-flex justify-content-end gap-2">`
-        row += `<button class="btn btn-warning" onclick="modifyRecord(${item.id})">Modificar</button>`
-        row += `<button class="btn btn-danger" onclick="deleteRecord(${item.id})">Borrar</button>`
-        row += `</td>`
-        row += `</tr>`
+        ((_) => {
+            let row = $(_`tr`)
 
-        $("table").find("tbody").append(row)
+            row.append(_`td${item.id}`)
+            row.append(_`td${item.value1}`)
+            row.append(_`td${item.value2}`)
+
+            // alternative 1
+            let btnModify = _`button${"Modificar"}class${"btn btn-warning"}onclick${`modifyRecord(${item.id})`}`
+            let btnDelete = _`button${"Borrar"}class${"btn btn-danger"}onclick${`deleteRecord(${item.id})`}`
+            
+            row.append(_`td${btnModify}`)
+            row.append(_`td${btnDelete}`)
+
+            // alternative 2
+            //row.append(_`td${_`button${"Modificar"}class${"btn btn-warning"}onclick${`modifyRecord(${item.id})`}`}`)
+            //row.append(_`td${_`button${"Borrar"}class${"btn btn-danger"}onclick${`deleteRecord(${item.id})`}`}`)
+
+            $("table").find("tbody").append(row)
+            
+        })(component.template)
     })
 })
 

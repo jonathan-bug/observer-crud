@@ -28,4 +28,32 @@ class Component extends Observer {
     render(callback) {
         this.callback = callback
     }
+
+    /**
+     * Builds a string element.
+     * @param {string} properties - String element properties.
+     * @param {string} values - String element properties values.
+     */
+    template(properties, ...values) {
+        let element = ``
+
+        element += `<${properties[0]}`
+        
+        properties
+            .slice(1, values.length)
+            .map((property, key) => element += ` ${property}="${values[key + 1]}"`)
+
+        if(properties[properties.length - 1] != "/") {
+            if(values.length != 0) {
+                element += `>${values[0]}</${properties[0]}>`
+            }else {
+                element += `></${properties[0]}>`
+            }
+            
+        }else {
+            element += ` />`
+        }
+        
+        return element
+    }
 }
